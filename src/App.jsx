@@ -3,6 +3,7 @@ import { SocialProvider, useSocial } from './context/SocialContext';
 import { Layout } from './components/layout/Layout';
 import { Feed } from './components/feed/Feed';
 import { ProfileView } from './components/profile/ProfileView';
+import { FriendsView } from './components/friends/FriendsView';
 
 const AppContent = () => {
   const { activeTab } = useSocial();
@@ -11,7 +12,8 @@ const AppContent = () => {
     <Layout>
       {activeTab === 'feed' && <Feed />}
       {activeTab === 'profile' && <ProfileView />}
-      {activeTab !== 'feed' && activeTab !== 'profile' && (
+      {activeTab === 'friends' && <FriendsView />}
+      {activeTab !== 'feed' && activeTab !== 'profile' && activeTab !== 'friends' && (
         <div style={{
           background: 'var(--glass-bg)',
           border: '1px solid var(--glass-border)',
@@ -24,7 +26,7 @@ const AppContent = () => {
             {activeTab.toUpperCase()} Section
           </h2>
           <p style={{ color: 'var(--text-secondary)' }}>
-            This module will be connected in our next step. Click "News Feed" or "Profile" in the sidebar to test!
+            This module will be connected in our next step.
           </p>
         </div>
       )}
