@@ -1,31 +1,34 @@
 import React, { useState } from 'react';
 import { useSocial } from '../../context/SocialContext';
 import styles from './Friends.module.css';
-import { UserCheck, UserX, Users, UserPlus, MessageSquare } from 'lucide-react';
+import { UserCheck, UserX, Users, UserPlus, MessageSquare, Send, X } from 'lucide-react';
 
 export const FriendsView = () => {
-  const { friendRequests, acceptFriendRequest, rejectFriendRequest, currentUser } = useSocial();
-  const [activeSubTab, setActiveSubTab] = useState('requests'); // 'requests' | 'friends'
+  const { friendRequests, acceptFriendRequest, rejectFriendRequest, friends, currentUser } = useSocial();
+  const [activeSubTab, setActiveSubTab] = useState('friends');
+  const [activeChatFriend, setActiveChatFriend] = useState(null);
+  const [messages, setMessages] = useState([
+    { sender: 'them', text: 'Hey Hafsa! How is your internship project going?' },
+    { sender: 'me', text: 'Hey! Going great, building the real-time social platform right now!' }
+  ]);
+  const [messageInput, setMessageInput] = useState('');
 
-  // Sample active friends list
-  const sampleFriends = [
-    {
-      id: 'usr_ayesha',
-      name: 'Ayesha Rehman',
-      handle: '@ayesha_dev',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-      status: 'Active now',
-      online: true,
-    },
-    {
-      id: 'usr_zain',
-      name: 'Zain Malik',
-      handle: '@zain_tech',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
-      status: 'Offline',
-      online: false,
-    },
-  ];
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!messageInput.trim()) return;
+
+    const newMsg = { sender: 'me', text: messageInput.trim() };
+    setMessages((prev) => [...prev, newMsg]);
+    setMessageInput('');
+
+    // Simulate instant auto-reply
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'them', text: 'Awesome! That dark obsidian UI looks super sleek!' }
+      ]);
+    }, 1200);
+  };
 
   return (
     <div className={styles.friendsContainer}>
@@ -47,7 +50,7 @@ export const FriendsView = () => {
           onClick={() => setActiveSubTab('friends')}
         >
           <Users size={18} />
-          <span>My Friends ({currentUser.stats.friendsCount})</span>
+          <span>My Friends ({friends.length})</span>
         </button>
       </div>
 
@@ -67,7 +70,7 @@ export const FriendsView = () => {
                     <h4 className={styles.userName}>{req.user.name}</h4>
                     <span className={styles.userHandle}>{req.user.handle}</span>
                     <span className={styles.mutualCount}>
-                      {req.user.mutualFriends} mutual connections
+                      {req.user.mutualFriends || 3} mutual connections
                     </span>
                   </div>
                 </div>
@@ -94,7 +97,7 @@ export const FriendsView = () => {
             <div className={styles.emptyCard}>
               <UserCheck size={40} className={styles.emptyIcon} />
               <h4>No pending friend requests</h4>
-              <p>When colleagues or friends invite you to connect, they'll show up here.</p>
+              <p>When colleagues invite you to connect, they will show up here.</p>
             </div>
           )}
         </div>
@@ -103,7 +106,7 @@ export const FriendsView = () => {
       {/* Friends List View */}
       {activeSubTab === 'friends' && (
         <div className={styles.cardsGrid}>
-          {sampleFriends.map((friend) => (
+          {friends.map((friend) => (
             <div key={friend.id} className={styles.requestCard}>
               <div className={styles.cardHeader}>
                 <div className={styles.avatarHolder}>
@@ -122,13 +125,61 @@ export const FriendsView = () => {
               </div>
 
               <div className={styles.actionButtonGroup}>
-                <button className={styles.messageBtn}>
+                <button
+                  className={styles.messageBtn}
+                  onClick={() => setActiveChatFriend(friend)}
+                >
                   <MessageSquare size={16} />
-                  <span>Message</span>
+                  <span>Message {friend.name.split(' ')[0]}</span>
                 </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Interactive Direct Message Modal */}
+      {activeChatFriend && (
+        <div className={styles.chatModalOverlay} onClick={() => setActiveChatFriend(null)}>
+          <div className={styles.chatModalBox} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.chatHeader}>
+              <div className={styles.chatHeaderUser}>
+                <img src={activeChatFriend.avatar} alt={activeChatFriend.name} className={styles.chatAvatar} />
+                <div>
+                  <h4>{activeChatFriend.name}</h4>
+                  <span className={styles.chatStatus}>{activeChatFriend.online ? 'Online' : 'Offline'}</span>
+                </div>
+              </div>
+              <button className={styles.chatCloseBtn} onClick={() => setActiveChatFriend(null)}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className={styles.chatBody}>
+              {messages.map((m, idx) => (
+                <div
+                  key={idx}
+                  className={`${styles.chatBubble} ${m.sender === 'me' ? styles.bubbleMe : styles.bubbleThem}`}
+                >
+                  {m.text}
+                </div>
+              ))}
+            </div>
+
+            <form onSubmit={handleSendMessage} className={styles.chatInputRow}>
+              <input
+                type="text"
+                placeholder={`Message ${activeChatFriend.name.split(' ')[0]}...`}
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                className={styles.chatInput}
+                autoFocus
+              />
+              <button type="submit" className={styles.chatSendBtn} disabled={!messageInput.trim()}>
+                <Send size={15} />
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

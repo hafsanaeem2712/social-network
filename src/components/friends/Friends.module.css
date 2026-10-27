@@ -1,214 +1,138 @@
-.friendsContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  width: 100%;
-}
-
-.subTabHeader {
-  display: flex;
-  gap: 1rem;
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  padding: 0.5rem;
-  border-radius: var(--radius-lg);
-}
-
-.tabBtn {
-  flex: 1;
+/* Direct Chat Modal Styling */
+.chatModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 300;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all var(--transition-fast);
+  padding: 1rem;
 }
 
-.tabBtn:hover {
-  color: var(--text-primary);
+.chatModalBox {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border-focus);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--glass-border);
   background: var(--bg-tertiary);
 }
 
-.tabBtnActive {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.15));
-  color: var(--text-primary);
-  border: 1px solid rgba(99, 102, 241, 0.4);
-  font-weight: 600;
-}
-
-.countBadge {
-  background: var(--accent-secondary);
-  color: #fff;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.1rem 0.45rem;
-  border-radius: var(--radius-full);
-}
-
-.cardsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.25rem;
-}
-
-.requestCard {
-  background: var(--glass-bg);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
+.chatHeaderUser {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1.25rem;
-  transition: border-color var(--transition-fast);
-}
-
-.requestCard:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.cardHeader {
-  display: flex;
-  gap: 1rem;
   align-items: center;
+  gap: 0.75rem;
 }
 
-.avatarHolder {
-  position: relative;
-}
-
-.userAvatar {
-  width: 54px;
-  height: 54px;
+.chatAvatar {
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-full);
   object-fit: cover;
 }
 
-.onlineDot {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 12px;
-  height: 12px;
-  background: var(--success);
-  border: 2px solid var(--bg-primary);
-  border-radius: var(--radius-full);
-}
-
-.metaInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.userName {
-  font-size: 1rem;
+.chatHeaderUser h4 {
+  font-size: 0.95rem;
   font-weight: 600;
+}
+
+.chatStatus {
+  font-size: 0.75rem;
+  color: var(--success);
+}
+
+.chatCloseBtn {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+.chatCloseBtn:hover {
   color: var(--text-primary);
 }
 
-.userHandle {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.mutualCount {
-  font-size: 0.76rem;
-  color: var(--accent-primary);
-  font-weight: 500;
-}
-
-.userStatus {
-  font-size: 0.76rem;
-  color: var(--text-muted);
-}
-
-.actionButtonGroup {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.acceptBtn {
+.chatBody {
   flex: 1;
+  padding: 1rem;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}
+
+.chatBubble {
+  max-width: 80%;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-md);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.bubbleThem {
+  align-self: flex-start;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  border-bottom-left-radius: 2px;
+}
+
+.bubbleMe {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: #fff;
+  border-bottom-right-radius: 2px;
+}
+
+.chatInputRow {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--glass-border);
+}
+
+.chatInput {
+  flex: 1;
+  background: var(--bg-primary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.chatInput:focus {
+  border-color: var(--accent-primary);
+}
+
+.chatSendBtn {
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-full);
   background: var(--accent-primary);
   color: #fff;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: all var(--transition-fast);
-}
-
-.acceptBtn:hover {
-  background: var(--accent-primary-hover);
-}
-
-.rejectBtn {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  padding: 0.6rem;
-  border-radius: var(--radius-full);
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  border: 1px solid var(--glass-border);
-  transition: all var(--transition-fast);
 }
 
-.rejectBtn:hover {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--danger);
-  border-color: var(--danger);
-}
-
-.messageBtn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  padding: 0.6rem;
-  border-radius: var(--radius-full);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--glass-border);
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all var(--transition-fast);
-}
-
-.messageBtn:hover {
-  background: var(--bg-elevated);
-  border-color: var(--glass-border-focus);
-}
-
-.emptyCard {
-  grid-column: 1 / -1;
-  background: var(--glass-bg);
-  border: 1px dashed var(--glass-border);
-  border-radius: var(--radius-lg);
-  padding: 3rem 1.5rem;
-  text-align: center;
-  color: var(--text-muted);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.emptyIcon {
-  color: var(--text-muted);
+.chatSendBtn:disabled {
+  opacity: 0.4;
 }

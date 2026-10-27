@@ -8,6 +8,41 @@ import {
 
 const SocialContext = createContext(null);
 
+const DEFAULT_FRIENDS = [
+  {
+    id: 'usr_ayesha',
+    name: 'Ayesha Rehman',
+    handle: '@ayesha_dev',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+    status: 'Active now',
+    online: true,
+  },
+  {
+    id: 'usr_zain',
+    name: 'Zain Malik',
+    handle: '@zain_tech',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+    status: 'Offline',
+    online: false,
+  },
+  {
+    id: 'usr_bilal',
+    name: 'Bilal Khan',
+    handle: '@bilal_k',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+    status: 'Active 2h ago',
+    online: false,
+  },
+  {
+    id: 'usr_fatima',
+    name: 'Fatima Noor',
+    handle: '@fatima_n',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+    status: 'Active now',
+    online: true,
+  }
+];
+
 export const SocialProvider = ({ children }) => {
   // 1. Current User State
   const [currentUser, setCurrentUser] = useState(() => {
@@ -15,31 +50,41 @@ export const SocialProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : CURRENT_USER;
   });
 
-  // 2. Posts Feed State
+  // 2. Dynamic Friends State
+  const [friends, setFriends] = useState(() => {
+    const saved = localStorage.getItem('sn_friends_list');
+    return saved ? JSON.parse(saved) : DEFAULT_FRIENDS;
+  });
+
+  // 3. Posts Feed State
   const [posts, setPosts] = useState(() => {
     const saved = localStorage.getItem('sn_posts');
     return saved ? JSON.parse(saved) : INITIAL_POSTS;
   });
 
-  // 3. Friend Requests State
+  // 4. Friend Requests State
   const [friendRequests, setFriendRequests] = useState(() => {
     const saved = localStorage.getItem('sn_friend_requests');
     return saved ? JSON.parse(saved) : INITIAL_FRIEND_REQUESTS;
   });
 
-  // 4. Notifications State
+  // 5. Notifications State
   const [notifications, setNotifications] = useState(() => {
     const saved = localStorage.getItem('sn_notifications');
     return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
   });
 
-  // 5. Active View Navigation
-  const [activeTab, setActiveTab] = useState('feed'); // 'feed' | 'profile' | 'friends' | 'notifications' | 'settings'
+  // 6. Navigation
+  const [activeTab, setActiveTab] = useState('feed');
 
-  // Sync to LocalStorage on changes
+  // Sync to LocalStorage
   useEffect(() => {
     localStorage.setItem('sn_user', JSON.stringify(currentUser));
   }, [currentUser]);
+
+  useEffect(() => {
+    localStorage.setItem('sn_friends_list', JSON.stringify(friends));
+  }, [friends]);
 
   useEffect(() => {
     localStorage.setItem('sn_posts', JSON.stringify(posts));
@@ -75,14 +120,9 @@ export const SocialProvider = ({ children }) => {
     };
 
     setPosts((prev) => [newPost, ...prev]);
-
-    // Update user stats
     setCurrentUser((prev) => ({
       ...prev,
-      stats: {
-        ...prev.stats,
-        postsCount: prev.stats.postsCount + 1,
-      },
+      stats: { ...prev.stats, postsCount: prev.stats.postsCount + 1 },
     }));
   };
 
@@ -119,34 +159,58 @@ export const SocialProvider = ({ children }) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) => {
         if (post.id === postId) {
-          return {
-            ...post,
-            comments: [...post.comments, newComment],
-          };
+          return { ...post, comments: [...post.comments, newComment] };
         }
         return post;
       })
     );
   };
 
-  // Actions: Friend Requests
+  // Actions: Friend Requests (With Real Friends Addition & Welcome Post)
   const acceptFriendRequest = (requestId) => {
     const targetRequest = friendRequests.find((r) => r.id === requestId);
     if (!targetRequest) return;
 
-    // Remove from requests list
+    // 1. Remove from pending requests
     setFriendRequests((prev) => prev.filter((r) => r.id !== requestId));
 
-    // Increment friends count
+    // 2. Add to active friends list
+    const newFriendEntity = {
+      id: targetRequest.user.id,
+      name: targetRequest.user.name,
+      handle: targetRequest.user.handle,
+      avatar: targetRequest.user.avatar,
+      status: 'Active just now',
+      online: true,
+    };
+    setFriends((prev) => [newFriendEntity, ...prev]);
+
+    // 3. Keep currentUser stats in sync
     setCurrentUser((prev) => ({
       ...prev,
-      stats: {
-        ...prev.stats,
-        friendsCount: prev.stats.friendsCount + 1,
-      },
+      stats: { ...prev.stats, friendsCount: (friends.length + 1) },
     }));
 
-    // Trigger Notification
+    // 4. Inject sample post from this new friend into feed
+    const newFriendPost = {
+      id: `pst_auto_${Date.now()}`,
+      author: {
+        id: targetRequest.user.id,
+        name: targetRequest.user.name,
+        handle: targetRequest.user.handle,
+        avatar: targetRequest.user.avatar,
+      },
+      content: `Hey everyone! Glad to officially connect with ${currentUser.name} on PulseNet! Excited to collaborate and share updates here. 🤝✨`,
+      media: null,
+      timestamp: 'Just now',
+      likesCount: 1,
+      hasLiked: false,
+      privacy: 'friends',
+      comments: [],
+    };
+    setPosts((prev) => [newFriendPost, ...prev]);
+
+    // 5. Send notification
     const notif = {
       id: `notif_${Date.now()}`,
       type: 'friend_accept',
@@ -165,28 +229,20 @@ export const SocialProvider = ({ children }) => {
     setFriendRequests((prev) => prev.filter((r) => r.id !== requestId));
   };
 
-  // Actions: Notifications
   const markAllNotificationsRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
   };
 
   const unreadNotificationsCount = notifications.filter((n) => !n.isRead).length;
 
-  // Actions: Privacy & Profile Settings
   const updateProfile = (updatedFields) => {
-    setCurrentUser((prev) => ({
-      ...prev,
-      ...updatedFields,
-    }));
+    setCurrentUser((prev) => ({ ...prev, ...updatedFields }));
   };
 
   const updatePrivacySettings = (newPrivacy) => {
     setCurrentUser((prev) => ({
       ...prev,
-      privacy: {
-        ...prev.privacy,
-        ...newPrivacy,
-      },
+      privacy: { ...prev.privacy, ...newPrivacy },
     }));
   };
 
@@ -194,6 +250,7 @@ export const SocialProvider = ({ children }) => {
     <SocialContext.Provider
       value={{
         currentUser,
+        friends,
         posts,
         friendRequests,
         notifications,
@@ -217,8 +274,6 @@ export const SocialProvider = ({ children }) => {
 
 export const useSocial = () => {
   const context = useContext(SocialContext);
-  if (!context) {
-    throw new Error('useSocial must be used within a SocialProvider');
-  }
+  if (!context) throw new Error('useSocial must be used within SocialProvider');
   return context;
 };
