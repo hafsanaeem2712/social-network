@@ -24,24 +24,24 @@ export const INITIAL_POSTS = [
   {
     id: 'pst_101',
     author: {
-      id: 'usr_ayesha',
-      name: 'Ayesha Rehman',
-      handle: '@ayesha_dev',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+      id: 'usr_me',
+      name: 'Hafsa Naeem',
+      handle: '@hafsanaeem',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
     },
     content: 'Just deployed our real-time collaborative workspace with automated Git workflows! Sleek UI with modern dark mode makes coding late night a breeze. 🚀💻',
     media: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1000&q=80',
     timestamp: '2 hours ago',
-    likesCount: 24,
+    likesCount: 18,
     hasLiked: false,
     privacy: 'public',
     comments: [
       {
         id: 'cmt_201',
         author: {
-          id: 'usr_me',
-          name: 'Hafsa Naeem',
-          avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+          id: 'usr_ayesha',
+          name: 'Ayesha Rehman',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
         },
         text: 'That dark obsidian aesthetic looks incredible! Well done.',
         timestamp: '1 hour ago',
@@ -183,7 +183,7 @@ export const INITIAL_FRIEND_REQUESTS = [
       id: 'usr_kinza',
       name: 'Kinza Tariq',
       handle: '@kinza_t',
-      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
       mutualFriends: 14,
     },
     timestamp: '2 days ago',
@@ -198,6 +198,50 @@ export const INITIAL_FRIEND_REQUESTS = [
       mutualFriends: 2,
     },
     timestamp: '3 days ago',
+  },
+  {
+    id: 'freq_13',
+    user: {
+      id: 'usr_tayyaba',
+      name: 'Tayyaba Bukhari',
+      handle: '@tayyaba_b',
+      avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+      mutualFriends: 10,
+    },
+    timestamp: '3 days ago',
+  },
+  {
+    id: 'freq_14',
+    user: {
+      id: 'usr_hassan',
+      name: 'Hassan Niaz',
+      handle: '@hassan_dev',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+      mutualFriends: 8,
+    },
+    timestamp: '4 days ago',
+  },
+  {
+    id: 'freq_15',
+    user: {
+      id: 'usr_zainab',
+      name: 'Zainab Qazi',
+      handle: '@zainab_q',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80',
+      mutualFriends: 16,
+    },
+    timestamp: '4 days ago',
+  },
+  {
+    id: 'freq_16',
+    user: {
+      id: 'usr_kamran',
+      name: 'Kamran Akmal',
+      handle: '@kamran_a',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+      mutualFriends: 4,
+    },
+    timestamp: '5 days ago',
   }
 ];
 

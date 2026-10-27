@@ -44,37 +44,31 @@ const DEFAULT_FRIENDS = [
 ];
 
 export const SocialProvider = ({ children }) => {
-  // 1. Current User State
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('sn_user');
     return saved ? JSON.parse(saved) : CURRENT_USER;
   });
 
-  // 2. Dynamic Friends State
   const [friends, setFriends] = useState(() => {
     const saved = localStorage.getItem('sn_friends_list');
     return saved ? JSON.parse(saved) : DEFAULT_FRIENDS;
   });
 
-  // 3. Posts Feed State
   const [posts, setPosts] = useState(() => {
     const saved = localStorage.getItem('sn_posts');
     return saved ? JSON.parse(saved) : INITIAL_POSTS;
   });
 
-  // 4. Friend Requests State
   const [friendRequests, setFriendRequests] = useState(() => {
     const saved = localStorage.getItem('sn_friend_requests');
     return saved ? JSON.parse(saved) : INITIAL_FRIEND_REQUESTS;
   });
 
-  // 5. Notifications State
   const [notifications, setNotifications] = useState(() => {
     const saved = localStorage.getItem('sn_notifications');
     return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
   });
 
-  // 6. Navigation
   const [activeTab, setActiveTab] = useState('feed');
 
   // Sync to LocalStorage
@@ -98,7 +92,7 @@ export const SocialProvider = ({ children }) => {
     localStorage.setItem('sn_notifications', JSON.stringify(notifications));
   }, [notifications]);
 
-  // Actions: Posts
+  // Actions
   const createPost = ({ content, media, privacy = 'public' }) => {
     if (!content.trim() && !media) return;
 
@@ -166,15 +160,69 @@ export const SocialProvider = ({ children }) => {
     );
   };
 
-  // Actions: Friend Requests (With Real Friends Addition & Welcome Post)
+  // Real-time Event Receiver: Updates notifications AND feed/requests synchronously
+  const receiveRealtimeEvent = (payload) => {
+    // 1. Add to Notifications
+    setNotifications((prev) => [payload, ...prev]);
+
+    // 2. If it is a like on recent post
+    if (payload.type === 'like') {
+      setPosts((prev) =>
+        prev.map((post, index) => {
+          if (index === 0) {
+            return { ...post, likesCount: post.likesCount + 1 };
+          }
+          return post;
+        })
+      );
+    }
+
+    // 3. If it is a comment
+    if (payload.type === 'comment') {
+      const simulatedComment = {
+        id: `cmt_live_${Date.now()}`,
+        author: {
+          id: `usr_${Date.now()}`,
+          name: payload.actor.name,
+          avatar: payload.actor.avatar,
+        },
+        text: payload.rawCommentText || 'Super excited about this release!',
+        timestamp: 'Just now',
+      };
+
+      setPosts((prev) =>
+        prev.map((post, index) => {
+          if (index === 0) {
+            return { ...post, comments: [...post.comments, simulatedComment] };
+          }
+          return post;
+        })
+      );
+    }
+
+    // 4. If it is a friend connection request
+    if (payload.type === 'friend_request') {
+      const newReq = {
+        id: `freq_live_${Date.now()}`,
+        user: {
+          id: `usr_live_${Date.now()}`,
+          name: payload.actor.name,
+          handle: `@${payload.actor.name.toLowerCase().replace(/\s+/g, '_')}`,
+          avatar: payload.actor.avatar,
+          mutualFriends: Math.floor(Math.random() * 8) + 2,
+        },
+        timestamp: 'Just now',
+      };
+      setFriendRequests((prev) => [newReq, ...prev]);
+    }
+  };
+
   const acceptFriendRequest = (requestId) => {
     const targetRequest = friendRequests.find((r) => r.id === requestId);
     if (!targetRequest) return;
 
-    // 1. Remove from pending requests
     setFriendRequests((prev) => prev.filter((r) => r.id !== requestId));
 
-    // 2. Add to active friends list
     const newFriendEntity = {
       id: targetRequest.user.id,
       name: targetRequest.user.name,
@@ -185,32 +233,11 @@ export const SocialProvider = ({ children }) => {
     };
     setFriends((prev) => [newFriendEntity, ...prev]);
 
-    // 3. Keep currentUser stats in sync
     setCurrentUser((prev) => ({
       ...prev,
-      stats: { ...prev.stats, friendsCount: (friends.length + 1) },
+      stats: { ...prev.stats, friendsCount: prev.stats.friendsCount + 1 },
     }));
 
-    // 4. Inject sample post from this new friend into feed
-    const newFriendPost = {
-      id: `pst_auto_${Date.now()}`,
-      author: {
-        id: targetRequest.user.id,
-        name: targetRequest.user.name,
-        handle: targetRequest.user.handle,
-        avatar: targetRequest.user.avatar,
-      },
-      content: `Hey everyone! Glad to officially connect with ${currentUser.name} on PulseNet! Excited to collaborate and share updates here. 🤝✨`,
-      media: null,
-      timestamp: 'Just now',
-      likesCount: 1,
-      hasLiked: false,
-      privacy: 'friends',
-      comments: [],
-    };
-    setPosts((prev) => [newFriendPost, ...prev]);
-
-    // 5. Send notification
     const notif = {
       id: `notif_${Date.now()}`,
       type: 'friend_accept',
@@ -262,6 +289,7 @@ export const SocialProvider = ({ children }) => {
         addComment,
         acceptFriendRequest,
         rejectFriendRequest,
+        receiveRealtimeEvent,
         markAllNotificationsRead,
         updateProfile,
         updatePrivacySettings,

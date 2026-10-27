@@ -1,8 +1,234 @@
-/* Direct Chat Modal Styling */
+.friendsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.subTabHeader {
+  display: flex;
+  gap: 0.75rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
+}
+
+.tabBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.tabBtn:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.tabBtnActive {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.15));
+  color: var(--text-primary);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  font-weight: 600;
+}
+
+.countBadge {
+  background: var(--accent-secondary);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-full);
+}
+
+/* Fixed Grid Layout */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.requestCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: all var(--transition-fast);
+}
+
+.requestCard:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatarHolder {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+}
+
+/* Image strict dimension fix */
+.userAvatar {
+  width: 54px !important;
+  height: 54px !important;
+  max-width: 54px !important;
+  max-height: 54px !important;
+  border-radius: var(--radius-full) !important;
+  object-fit: cover !important;
+  display: block;
+  border: 2px solid var(--glass-border);
+}
+
+.onlineDot {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 13px;
+  height: 13px;
+  background: var(--success);
+  border: 2px solid var(--bg-primary);
+  border-radius: var(--radius-full);
+}
+
+.metaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  overflow: hidden;
+}
+
+.userName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.userHandle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mutualCount {
+  font-size: 0.78rem;
+  color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.userStatus {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.actionButtonGroup {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.acceptBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.acceptBtn:hover {
+  background: var(--accent-primary-hover);
+}
+
+.rejectBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  border: 1px solid var(--glass-border);
+  transition: all var(--transition-fast);
+}
+
+.rejectBtn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.messageBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.messageBtn:hover {
+  background: var(--bg-elevated);
+  border-color: var(--glass-border-focus);
+  color: #fff;
+}
+
+.emptyCard {
+  grid-column: 1 / -1;
+  background: var(--glass-bg);
+  border: 1px dashed var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.emptyIcon {
+  color: var(--text-muted);
+}
+
+/* Chat Modal Styles */
 .chatModalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
   z-index: 300;
   display: flex;
@@ -22,6 +248,12 @@
   height: 480px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
+  animation: popIn 150ms ease;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .chatHeader {
@@ -49,6 +281,7 @@
 .chatHeaderUser h4 {
   font-size: 0.95rem;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .chatStatus {
@@ -60,6 +293,7 @@
   color: var(--text-muted);
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .chatCloseBtn:hover {
@@ -78,7 +312,7 @@
 
 .chatBubble {
   max-width: 80%;
-  padding: 0.6rem 0.9rem;
+  padding: 0.65rem 0.95rem;
   border-radius: var(--radius-md);
   font-size: 0.86rem;
   line-height: 1.4;
@@ -131,8 +365,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .chatSendBtn:disabled {
   opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
 }
