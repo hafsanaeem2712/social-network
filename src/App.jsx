@@ -2,6 +2,7 @@ import React from 'react';
 import { SocialProvider, useSocial } from './context/SocialContext';
 import { Layout } from './components/layout/Layout';
 import { Feed } from './components/feed/Feed';
+import { ProfileView } from './components/profile/ProfileView';
 
 const AppContent = () => {
   const { activeTab } = useSocial();
@@ -9,7 +10,8 @@ const AppContent = () => {
   return (
     <Layout>
       {activeTab === 'feed' && <Feed />}
-      {activeTab !== 'feed' && (
+      {activeTab === 'profile' && <ProfileView />}
+      {activeTab !== 'feed' && activeTab !== 'profile' && (
         <div style={{
           background: 'var(--glass-bg)',
           border: '1px solid var(--glass-border)',
@@ -22,7 +24,7 @@ const AppContent = () => {
             {activeTab.toUpperCase()} Section
           </h2>
           <p style={{ color: 'var(--text-secondary)' }}>
-            This module will be connected in our next step. Click "News Feed" in the sidebar to view your live interactive feed!
+            This module will be connected in our next step. Click "News Feed" or "Profile" in the sidebar to test!
           </p>
         </div>
       )}
